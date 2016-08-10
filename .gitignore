@@ -1,5 +1,1 @@
-.npmrc
-npm-debug.log
 node_modules
-.babelrc
-dist
