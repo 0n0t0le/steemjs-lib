@@ -65,44 +65,47 @@ var HEX_DUMP = process.env.npm_config__graphene_serializer_hex_dump;
 *  It is treated as a uint64_t for all internal operations, but
 *  is easily converted to something that can be displayed.
 */
-/*Types.asset = {
-    fromByteBuffer(b){
-        var amount = b.readInt64()
-        var precision = b.readUint8()
-        var b_copy = b.copy(b.offset, b.offset + 7)
-        var symbol = new Buffer(b_copy.toBinary(), "binary").toString().replace(/\x00/g, "")
+Types.asset = {
+    fromByteBuffer: function fromByteBuffer(b) {
+        var amount = b.readInt64();
+        var precision = b.readUint8();
+        var b_copy = b.copy(b.offset, b.offset + 7);
+        var symbol = new Buffer(b_copy.toBinary(), "binary").toString().replace(/\x00/g, "");
         b.skip(7);
         // "1.000 STEEM" always written with full precision
-        var amount_string = fromImpliedDecimal(amount, precision)
-        return amount_string + " " + symbol
+        var amount_string = fromImpliedDecimal(amount, precision);
+        return amount_string + " " + symbol;
     },
-    appendByteBuffer(b, object){
-        object = object.trim()
-        if( ! /^[0-9]+\.?[0-9]* [A-Za-z0-9]+$/.test(object))
-            throw new Error("Expecting amount like '99.000 SYMBOL', instead got '" + object + "'")
+    appendByteBuffer: function appendByteBuffer(b, object) {
+        object = object.trim();
+        if (!/^[0-9]+\.?[0-9]* [A-Za-z0-9]+$/.test(object)) throw new Error("Expecting amount like '99.000 SYMBOL', instead got '" + object + "'");
 
-        var [ amount, symbol ] = object.split(" ")
-        if(symbol.length > 6)
-            throw new Error("Symbols are not longer than 6 characters " + symbol + "-"+ symbol.length)
+        //var [ amount, symbol ] = object.split(" ")
+        var amount = object.split(" ")[0];
+        var symbol = object.split(" ")[1];
 
-        b.writeInt64(v.to_long(amount.replace(".", "")))
-        var dot = amount.indexOf(".") // 0.000
-        var precision = dot === -1 ? 0 : amount.length - dot - 1
-        b.writeUint8(precision)
-        b.append(symbol.toUpperCase(), 'binary')
-        for(let i = 0; i < 7 - symbol.length; i++)
-            b.writeUint8(0)
-        return
+        if (symbol.length > 6) throw new Error("Symbols are not longer than 6 characters " + symbol + "-" + symbol.length);
+
+        b.writeInt64(v.to_long(amount.replace(".", "")));
+        var dot = amount.indexOf("."); // 0.000
+        var precision = dot === -1 ? 0 : amount.length - dot - 1;
+        b.writeUint8(precision);
+        b.append(symbol.toUpperCase(), 'binary');
+        for (var i = 0; i < 7 - symbol.length; i++) {
+            b.writeUint8(0);
+        }return;
     },
-    fromObject(object){
-        return object
+    fromObject: function fromObject(object) {
+        return object;
     },
-    toObject(object, debug = {}){
-        if (debug.use_default && object === undefined) { return "0.000 STEEM"; }
-        return object
+    toObject: function toObject(object, debug) {
+        if (debug && debug.use_default && object === undefined) {
+            return "0.000 STEEM";
+        }
+        return object;
     }
-}
-*/
+};
+
 Types.uint8 = {
     fromByteBuffer: function fromByteBuffer(b) {
         return b.readUint8();
