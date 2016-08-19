@@ -16,7 +16,10 @@
     "build": "babel lib --presets babel-preset-es2015 --out-dir dist",
     "prepublish": "npm run build",
     "doc": "esdoc -c esdoc.json",
-    "example-sig": "nodemon ./examples/signature.js"
+    "example-sig": "nodemon ./examples/signature.js",
+    "prebrowserify": "npm run build",
+    "postbrowserify": "uglifyjs --compress --mangle --sequences --drop_console --output build/steemjs-lib.min.js -- build/steemjs-lib.js",
+    "browserify": "browserify dist/browser.js --standalone steemJS -o build/steemjs-lib.js -d"
   },
   "repository": {
     "type": "git",
@@ -44,7 +47,7 @@
     "event-emitter": "^0.3.4",
     "immutable": "^3.7.6",
     "secure-random": "^1.1.1",
-    "steem-rpc": "^0.5.2"
+    "steem-rpc": "feruzm/steem-rpc"
   },
   "devDependencies": {
     "assert": "^1.3.0",
